@@ -1,45 +1,36 @@
-provider "vsphere" {
-  user           = var.vsphere_user
-  password       = var.vsphere_password
-  vsphere_server = var.vsphere_server
+/**********************************************************
+ *
+ * Proxmox Home - Infra as Code (IaC)
+ * Location: ./main.tf
+ *
+ * Description:
+ *  - Starting point for Home Terraform IaC
+ *
+ * Listening To:
+ *  - Saliva: Every Six Seconds
+ * 
+ *********************************************************/
 
-  allow_unverified_ssl = true
-}
-
-data "vsphere_datacenter" "dc" {
-  name = "dc1"
-}
-
-data "vsphere_datastore" "datastore" {
-  name          = "array-raid10"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_resource_pool" "pool" {
-  name          = "cluster1/Resources"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_network" "network" {
-  name          = "VM Network"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-resource "vsphere_virtual_machine" "vm" {
-  name             = "terraform-test"
-  resource_pool_id = data.vsphere_resource_pool.pool.id
-  datastore_id     = data.vsphere_datastore.datastore.id
-
-  num_cpus = 2
-  memory   = 1024
-  guest_id = "other3xLinux64Guest"
-
-  network_interface {
-    network_id = data.vsphere_network.network.id
+terraform {
+  required_providers {
+    proxmox = {
+      source  = "Telmate/proxmox"
+      version = "2.9.6"
+    }
   }
+}
 
-  disk {
-    label = "disk0"
-    size  = 20
+provider "proxmox" {
+  pm_api_url          = var.pm_api_url
+  pm_api_token_id     = var.pm_api_token_id
+  pm_api_token_secret = var.pm_api_token_secret
+  pm_tls_insecure     = true
+
+  pm_debug      = true
+  pm_log_enable = true
+  pm_log_file   = "tf-plugin-proxmox.log"
+  pm_log_levels = {
+    _default    = "debug"
+    _capturelog = ""
   }
 }
