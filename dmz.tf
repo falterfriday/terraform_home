@@ -10,46 +10,49 @@
  *
  *********************************************************/
 
-
-resource "proxmox_vm_qemu" "vpn01" {
-  name        = var.pm_dmz_vpn01_name
-  target_node = var.pm_node
-  clone       = var.pm_template
+resource "proxmox_vm_qemu" "dmz_vms" {
+  for_each    = var.dmz_vms
+  name        = each.value.name
+  desc        = each.value.name
+  vmid        = each.value.vmid
+  target_node = each.value.target_node
   os_type     = "cloud-init"
-  cores       = 4
-  sockets     = 1
+  full_clone  = true
+  memory      = each.value.memory
+  sockets     = "1"
+  cores       = each.value.vcpu
   cpu         = "host"
-  memory      = 2048
   scsihw      = "virtio-scsi-pci"
-  bootdisk    = "scsi0"
+  clone       = var.pm_template
   agent       = 1
-
   disk {
-    size     = "20G"
-    type     = "scsi"
-    storage  = var.pm_storage_pool
-    iothread = 0
+    size    = each.value.disk_size
+    type    = "virtio"
+    storage = var.pm_storage_pool
   }
   network {
     model  = "virtio"
     bridge = "vmbr0"
     tag    = 5
   }
-  lifecycle {
-    ignore_changes = [
-      network,
-    ]
-  }
 
+  # Cloud-init
   ciuser     = var.ci_user
   cipassword = var.ci_password
   nameserver = var.pm_dmz_ip_nameserver
-  ipconfig0  = "ip=${var.pm_dmz_ip_vm_vpn01}/24,gw=${var.pm_dmz_ip_gw}"
-  sshkeys    = <<EOF
-${var.pm_ssh_personal_pub_key}
-EOF
-}
+  ipconfig0  = "ip=${each.value.ip}/24,gw=${each.value.gw}"
+  ssh_user   = var.ci_user
+  sshkeys    = var.pm_ssh_pub_key
 
-output "dmz_ip" {
-  value = proxmox_vm_qemu.vpn01.default_ipv4_address
+  # Post creation actions
+  # provisioner "remote-exec" {
+  #   inline = concat(var.extend_root_disk_script, var.firewalld_configs)
+  #   connection {
+  #     type        = "ssh"
+  #     user        = var.ci_user
+  #     password    = var.ci_password
+  #     private_key = file("~/.ssh/id_rsa")
+  #     host        = each.value.ip
+  #   }
+  # }
 }
