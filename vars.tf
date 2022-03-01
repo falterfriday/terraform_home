@@ -13,6 +13,9 @@ variable "pm_template" {
 variable "pm_storage_pool" {
   type = string
 }
+variable "pm_storage_type" {
+  type = string
+}
 variable "pm_ssh_pub_key" {
   type = string
 }
