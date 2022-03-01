@@ -1,9 +1,3 @@
-variable "pm_user" {
-  type = string
-}
-variable "pm_user_password" {
-  type = string
-}
 variable "pm_api_token_id" {
   type = string
 }
@@ -19,19 +13,10 @@ variable "pm_template" {
 variable "pm_storage_pool" {
   type = string
 }
-variable "pm_node" {
+variable "pm_storage_type" {
   type = string
 }
-variable "pm_ssh_personal_pub_key" {
-  type = string
-}
-variable "pm_dmz_ip_gw" {
-  type = string
-}
-variable "pm_dmz_ip_vm_vpn01" {
-  type = string
-}
-variable "pm_dmz_vpn01_name" {
+variable "pm_ssh_pub_key" {
   type = string
 }
 variable "pm_dmz_ip_nameserver" {
@@ -43,4 +28,10 @@ variable "ci_user" {
 variable "ci_password" {
   type = string
 }
-
+variable "dmz_vms" {
+  description = "vm variables in a dictionary "
+  type        = map(any)
+}
+variable "extend_root_disk_script" {
+  type = list(any)
+}
