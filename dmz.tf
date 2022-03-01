@@ -25,15 +25,18 @@ resource "proxmox_vm_qemu" "dmz_vms" {
   scsihw      = "virtio-scsi-pci"
   clone       = var.pm_template
   agent       = 1
+  
   disk {
     size    = each.value.disk_size
-    type    = "virtio"
+    type    = var.pm_storage_type
     storage = var.pm_storage_pool
+    discard = "on"
   }
+  
   network {
     model  = "virtio"
     bridge = "vmbr0"
-    tag    = 5
+    tag    = each.value.vlan_tag
   }
 
   # Cloud-init
