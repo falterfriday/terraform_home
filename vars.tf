@@ -32,6 +32,3 @@ variable "dmz_vms" {
   description = "vm variables in a dictionary "
   type        = map(any)
 }
-variable "extend_root_disk_script" {
-  type = list(any)
-}
