@@ -47,15 +47,32 @@ resource "proxmox_vm_qemu" "dmz_vms" {
   ssh_user   = var.ci_user
   sshkeys    = var.pm_ssh_pub_key
 
+  provisioner "file" {
+    source      = "./scripts/${each.value.script}"
+    destination = "/tmp/script.sh"
+
+    connection {
+      type        = "ssh"
+      user        = var.ci_user
+      password    = var.ci_password
+      private_key = file("~/.ssh/id_rsa")
+      host        = each.value.ip
+    }
+  }
+
   # Post creation actions
-  # provisioner "remote-exec" {
-  #   inline = concat(var.extend_root_disk_script, var.firewalld_configs)
-  #   connection {
-  #     type        = "ssh"
-  #     user        = var.ci_user
-  #     password    = var.ci_password
-  #     private_key = file("~/.ssh/id_rsa")
-  #     host        = each.value.ip
-  #   }
-  # }
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/script.sh",
+      "bash /tmp/script.sh",
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = var.ci_user
+      password    = var.ci_password
+      private_key = file("~/.ssh/id_rsa")
+      host        = each.value.ip
+    }
+  }
 }
