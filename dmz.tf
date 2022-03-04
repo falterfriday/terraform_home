@@ -19,20 +19,21 @@ resource "proxmox_vm_qemu" "dmz_vms" {
   os_type     = "cloud-init"
   full_clone  = true
   memory      = each.value.memory
+  balloon     = each.value.balloon
   sockets     = "1"
   cores       = each.value.vcpu
   cpu         = "host"
   scsihw      = "virtio-scsi-pci"
   clone       = var.pm_template
   agent       = 1
-  
+
   disk {
     size    = each.value.disk_size
     type    = var.pm_storage_type
     storage = var.pm_storage_pool
     discard = "on"
   }
-  
+
   network {
     model  = "virtio"
     bridge = "vmbr0"
