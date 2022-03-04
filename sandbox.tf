@@ -4,7 +4,7 @@
  * Location: ./sandbox.tf
  *
  * Details:
- *  - VLAN:       510 (sandboxLan)
+ *  - VLAN:       10 (sandboxLan)
  *  - Image:      Ubuntu 20.04 LTS
  *  - Cloud-init: true
  *
