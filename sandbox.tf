@@ -1,17 +1,17 @@
 /**********************************************************
  *
  * Proxmox Home - Infra as Code (IaC)
- * Location: ./dmz.tf
+ * Location: ./sandbox.tf
  *
  * Details:
- *  - VLAN:       5 (dmzLan)
+ *  - VLAN:       10 (sandboxLan)
  *  - Image:      Ubuntu 20.04 LTS
  *  - Cloud-init: true
  *
  *********************************************************/
 
-resource "proxmox_vm_qemu" "dmz_vms" {
-  for_each    = var.dmz_vms
+resource "proxmox_vm_qemu" "sandbox_vms" {
+  for_each    = var.sandbox_vms
   name        = each.value.name
   desc        = each.value.name
   vmid        = each.value.vmid
@@ -43,7 +43,7 @@ resource "proxmox_vm_qemu" "dmz_vms" {
   # Cloud-init
   ciuser     = var.ci_user
   cipassword = var.ci_password
-  nameserver = var.pm_dmz_ip_nameserver
+  nameserver = var.pm_sandbox_ip_nameserver
   ipconfig0  = "ip=${each.value.ip}/24,gw=${each.value.gw}"
   ssh_user   = var.ci_user
   sshkeys    = var.pm_ssh_pub_key

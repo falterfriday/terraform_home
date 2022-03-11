@@ -22,6 +22,9 @@ variable "pm_ssh_pub_key" {
 variable "pm_dmz_ip_nameserver" {
   type = string
 }
+variable "pm_sandbox_ip_nameserver" {
+  type = string
+}
 variable "ci_user" {
   type = string
 }
@@ -29,6 +32,10 @@ variable "ci_password" {
   type = string
 }
 variable "dmz_vms" {
+  description = "vm variables in a dictionary "
+  type        = map(any)
+}
+variable "sandbox_vms" {
   description = "vm variables in a dictionary "
   type        = map(any)
 }
