@@ -24,8 +24,9 @@ resource "proxmox_vm_qemu" "dmz_vms" {
   cores       = each.value.vcpu
   cpu         = "host"
   scsihw      = "virtio-scsi-pci"
-  clone       = var.pm_template
-  agent       = 1
+  clone  = each.value.pm_template
+  agent  = 1
+  onboot = each.value.onboot
 
   disk {
     size    = each.value.disk_size
@@ -53,10 +54,11 @@ resource "proxmox_vm_qemu" "dmz_vms" {
     destination = "/tmp/script.sh"
 
     connection {
-      type        = "ssh"
-      user        = var.ci_user
-      password    = var.ci_password
-      private_key = file("~/.ssh/id_rsa")
+      type = "ssh"
+      user = var.ci_user
+      # password    = var.ci_password
+      # private_key = file("~/.ssh/id_rsa")
+      private_key = file(each.value.ssh_key_path)
       host        = each.value.ip
     }
   }
@@ -69,10 +71,11 @@ resource "proxmox_vm_qemu" "dmz_vms" {
     ]
 
     connection {
-      type        = "ssh"
-      user        = var.ci_user
-      password    = var.ci_password
-      private_key = file("~/.ssh/id_rsa")
+      type = "ssh"
+      user = var.ci_user
+      # password    = var.ci_password
+      # private_key = file("~/.ssh/id_rsa")
+      private_key = file(each.value.ssh_key_path)
       host        = each.value.ip
     }
   }
