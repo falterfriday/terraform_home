@@ -31,11 +31,7 @@ variable "ci_user" {
 variable "ci_password" {
   type = string
 }
-variable "dmz_vms" {
-  description = "vm variables in a dictionary "
-  type        = map(any)
-}
-variable "sandbox_vms" {
+variable "vms" {
   description = "vm variables in a dictionary "
   type        = map(any)
 }
