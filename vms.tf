@@ -1,17 +1,17 @@
 /**********************************************************
  *
  * Proxmox Home - Infra as Code (IaC)
- * Location: ./dmz.tf
+ * Location: ./vms.tf
  *
  * Details:
- *  - VLAN:       5 (dmzLan)
- *  - Image:      Ubuntu 20.04 LTS
+ *  - VLAN:       true
  *  - Cloud-init: true
+ *  - Image:      Ubuntu 20.04 LTS
  *
  *********************************************************/
 
-resource "proxmox_vm_qemu" "dmz_vms" {
-  for_each    = var.dmz_vms
+resource "proxmox_vm_qemu" "vms" {
+  for_each    = var.vms
   name        = each.value.name
   desc        = each.value.name
   vmid        = each.value.vmid
@@ -24,9 +24,9 @@ resource "proxmox_vm_qemu" "dmz_vms" {
   cores       = each.value.vcpu
   cpu         = "host"
   scsihw      = "virtio-scsi-pci"
-  clone  = each.value.pm_template
-  agent  = 1
-  onboot = each.value.onboot
+  clone       = each.value.pm_template
+  agent       = 1
+  onboot      = each.value.onboot
 
   disk {
     size    = each.value.disk_size
